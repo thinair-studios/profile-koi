@@ -1,5 +1,5 @@
-# Redraws Rijad's koi every night from his GitHub activity (https://github.com/yalongwastaken/git-koi) and commits it
-# here; his profile README shows koi/koi.gif from this repo. It runs in the Thin Air Studios org so it doesn't depend
+# Redraws Rijad's koi every night from his GitHub activity (https://github.com/yalongwastaken/git-koi), puts it in a
+# pond that reacts to the same activity (pond.mjs), and commits both here; his profile README shows koi/koi-pond.gif. It runs in the Thin Air Studios org so it doesn't depend
 # on Actions in his personal account.
 name: Koi
 
@@ -25,10 +25,20 @@ jobs:
           login: RijadRajkic
           body: asagi
           output-dir: koi
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Put the koi in its pond (ripples, lily pads and flowers follow the day's activity)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          npm ci --no-audit --no-fund
+          node pond.mjs koi/koi.gif koi/koi-pond.gif RijadRajkic
       - name: Commit the koi if it changed
         shell: bash
         run: |
-          git add koi/koi.gif koi/koi.png
+          git add koi/koi.gif koi/koi.png koi/koi-pond.gif
           if git diff --cached --quiet; then
             echo "The koi is unchanged; nothing to commit."
             exit 0

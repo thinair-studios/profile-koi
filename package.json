@@ -1,0 +1,9 @@
+{
+  "name": "profile-koi",
+  "private": true,
+  "type": "module",
+  "description": "Puts git-koi's koi in a pond that reacts to the day's GitHub activity.",
+  "dependencies": {
+    "sharp": "0.34.5"
+  }
+}
