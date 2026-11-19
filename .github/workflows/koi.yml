@@ -1,0 +1,39 @@
+# Redraws Rijad's koi every night from his GitHub activity (https://github.com/yalongwastaken/git-koi) and commits it
+# here; his profile README shows koi/koi.gif from this repo. It runs in the Thin Air Studios org so it doesn't depend
+# on Actions in his personal account.
+name: Koi
+
+on:
+  schedule:
+    # Just after midnight UTC, so the koi shows the day that just ended.
+    - cron: "20 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: koi
+
+jobs:
+  koi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Pinned to the commit behind v1 / v1.0.2, so a moved tag can't change what runs here.
+      - uses: yalongwastaken/git-koi@7305e9b1fadee6f43d3b4fa543a25d4cde79856e # v1.0.2
+        with:
+          login: RijadRajkic
+          body: asagi
+          output-dir: koi
+      - name: Commit the koi if it changed
+        shell: bash
+        run: |
+          git add koi/koi.gif koi/koi.png
+          if git diff --cached --quiet; then
+            echo "The koi is unchanged; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --quiet --message "koi: draw the day's koi"
+          git push --quiet
